@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>
+    <%= title %>
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.js"></script>
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+    https://firebase.google.com/docs/web/setup#available-libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-analytics.js"></script>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
+  <script>
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC9lP7VEWGdfHn1PGsm7tm1hf4PVU3XcbU",
+      authDomain: "demopracticee.firebaseapp.com",
+      projectId: "demopracticee",
+      storageBucket: "demopracticee.appspot.com",
+      messagingSenderId: "604328769638",
+      appId: "1:604328769638:web:57e400463685774f3ad5a7",
+      measurementId: "G-PJ1ZVLL4WT"
+    };
+    try {
+      firebase.initializeApp(firebaseConfig);
+      console.log(firebase);
+    } catch (e) {
+      console.error(e);
+    }
+    let ui = new firebaseui.auth.AuthUI(firebase.auth());
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (!user) return;
+      const usr = user.displayName ? user.displayName :
+        user.email ? user.email :
+          user.phoneNumber ? user.phoneNumber :
+            user.uid;
+      document.querySelector('#msg').textContent = '"' + usr + '" logined!';
+    });
+
+    function login() {
+      const uiConfig = {
+        callbacks: {
+          signInSuccessWithAuthResult: (authResult, redirectUrl) => {
+            return true;
+          },
+          uiShown: function () { }
+        },
+        signInFlow: 'popup',
+        signInSuccessUrl: '.',
+        signInOptions: [
+          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+          firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+          firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+          firebase.auth.GithubAuthProvider.PROVIDER_ID,
+          firebase.auth.EmailAuthProvider.PROVIDER_ID,
+          firebase.auth.PhoneAuthProvider.PROVIDER_ID
+        ],
+      };
+      ui.start('#firebase-auth-container', uiConfig);
+    }
+
+    function logout() {
+      firebase.auth().signOut();
+      document.getElementById('msg').textContent = 'signOut..';
+    }
+  </script>
+</head>
+
+<body>
+  <h1>
+    <%= title %>
+  </h1>
+  <p>Welcome to <%= title %>
+  </p>
+  <p><%= fname %><p>
+  <p id="msg"></p>
+  <div id="firebase-auth-container"></div>
+  <button onclick="login();">Login</button>
+  <button onclick="logout();">Logout</button>
+</body>
+
+</html>
